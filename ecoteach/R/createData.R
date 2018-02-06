@@ -1,8 +1,8 @@
 #' Simulate test data
 #' @description This function creates synthetic dataset with various problems such as overdispersion, zero-inflation, etc. and was modified to use also externally generated environmental data.
 #'
-#' @author Lisa Hülsmann
-#' @note The basic structure of this function was taken from \code{\link[DHARMa]{createData}} by Florian Hartig.
+#' @author Lisa Huelsmann
+#' @note The basic structure of this function was taken from \code{\link[DHARMa]{createData}} in the package DHARMa by Florian Hartig.
 #'
 #' @param replicates number of datasets to create
 #' @param sampleSize sample size of the dataset

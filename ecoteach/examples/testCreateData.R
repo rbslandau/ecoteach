@@ -14,17 +14,17 @@ summary(fittedModel)
 
 # External predictors
 
-# nvar <- 4
-# mu <- sample(seq(0.01, 0.5, length.out = 50), nvar, replace = TRUE)
-# data_sim <- corrEnv(n = 2000, nvar = nvar, ngrad = 3, mu = mu, rho = 0.9, rho.non.corr = 0)
-#
-# testData = createDataExt(sampleSize = 2000, extPredictors = data_sim[[2]], fixedEffects = c(2, 2, 1, 0))
-#
-# hist(testData$observedResponse)
-# pairs(testData[, grepl("Environment", names(testData))])
-#
-# fittedModel <- lmer(observedResponse ~ Environment1 + Environment2 + Environment3 + Environment4 + (1|group), data = testData)
-# summary(fittedModel)
+nvar <- 4
+mu <- sample(seq(0.01, 0.5, length.out = 50), nvar, replace = TRUE)
+data_sim <- corrEnv(n = 2000, nvar = nvar, ngrad = 3, mu = mu, rho = 0.9, rho.non.corr = 0)
+
+testData = createDataExt(sampleSize = 2000, extPredictors = data_sim[[2]], fixedEffects = c(2, 2, 1, 0))
+
+hist(testData$observedResponse)
+pairs(testData[, grepl("Environment", names(testData))])
+
+fittedModel <- lmer(observedResponse ~ Environment1 + Environment2 + Environment3 + Environment4 + (1|group), data = testData)
+summary(fittedModel)
 
 
 

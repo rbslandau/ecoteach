@@ -52,7 +52,7 @@ createDataExt(replicates = 1, sampleSize = 10, extPredictors = NULL,
 This function creates synthetic dataset with various problems such as overdispersion, zero-inflation, etc. and was modified to use also externally generated environmental data.
 }
 \note{
-The basic structure of this function was taken from \code{\link[DHARMa]{createData}} by Florian Hartig.
+The basic structure of this function was taken from \code{\link[DHARMa]{createData}} in the package DHARMa by Florian Hartig.
 }
 \examples{
 require(lme4)
@@ -60,7 +60,7 @@ require(lme4)
 
 # complex environment
 
-testData = createData(sampleSize = 2000, intercept = 5, fixedEffects = c(2, 2, 0), cor = 0.5)
+testData = createDataExt(sampleSize = 2000, intercept = 5, fixedEffects = c(2, 2, 0), cor = 0.5)
 
 pairs(testData[, grepl("Environment", names(testData))])
 
@@ -71,17 +71,17 @@ summary(fittedModel)
 
 # External predictors
 
-# nvar <- 4
-# mu <- sample(seq(0.01, 0.5, length.out = 50), nvar, replace = TRUE)
-# data_sim <- corrEnv(n = 2000, nvar = nvar, ngrad = 3, mu = mu, rho = 0.9, rho.non.corr = 0)
-#
-# testData = createData(sampleSize = 2000, extPredictors = data_sim[[2]], fixedEffects = c(2, 2, 1, 0))
-#
-# hist(testData$observedResponse)
-# pairs(testData[, grepl("Environment", names(testData))])
-#
-# fittedModel <- lmer(observedResponse ~ Environment1 + Environment2 + Environment3 + Environment4 + (1|group), data = testData)
-# summary(fittedModel)
+nvar <- 4
+mu <- sample(seq(0.01, 0.5, length.out = 50), nvar, replace = TRUE)
+data_sim <- corrEnv(n = 2000, nvar = nvar, ngrad = 3, mu = mu, rho = 0.9, rho.non.corr = 0)
+
+testData = createDataExt(sampleSize = 2000, extPredictors = data_sim[[2]], fixedEffects = c(2, 2, 1, 0))
+
+hist(testData$observedResponse)
+pairs(testData[, grepl("Environment", names(testData))])
+
+fittedModel <- lmer(observedResponse ~ Environment1 + Environment2 + Environment3 + Environment4 + (1|group), data = testData)
+summary(fittedModel)
 
 
 
@@ -91,7 +91,7 @@ summary(fittedModel)
 
 # with zero-inflation
 
-testData = createData(sampleSize = 500, intercept = 2, fixedEffects = c(1),
+testData = createDataExt(sampleSize = 500, intercept = 2, fixedEffects = c(1),
                       overdispersion = 0, family = poisson(), quadraticFixedEffects = c(-3),
                       randomEffectVariance = 0, pZeroInflation = 0.6)
 
@@ -102,7 +102,7 @@ hist(testData$observedResponse)
 
 # binomial with multiple trials
 
-testData = createData(sampleSize = 40, intercept = 2, fixedEffects = c(1),
+testData = createDataExt(sampleSize = 40, intercept = 2, fixedEffects = c(1),
                       overdispersion = 0, family = binomial(), quadraticFixedEffects = c(-3),
                       randomEffectVariance = 0, binomialTrials = 20)
 
@@ -111,7 +111,7 @@ plot(observedResponse1 / observedResponse0 ~ Environment1, data = testData, ylab
 
 # spatial / temporal correlation
 
-testData = createData(sampleSize = 100, family = poisson(), spatialAutocorrelation = 3,
+testData = createDataExt(sampleSize = 100, family = poisson(), spatialAutocorrelation = 3,
                       temporalAutocorrelation = 3)
 
 par(mfrow = c(1,2))
@@ -129,5 +129,5 @@ plot(log(observedResponse) ~ x, data = testData)
 
 }
 \author{
-Lisa Hülsmann
+Lisa Huelsmann
 }
