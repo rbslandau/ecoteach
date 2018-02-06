@@ -1,8 +1,10 @@
 #' Generate random data with a given correlation structure
 #'
-#' This function generates random data with a given correlation structure. In contrast to other 
+#' @description This function generates random data with a given correlation structure. In contrast to other
 #' functions, the aim is to establish variables that are associated with different gradients as for
-#' example environmental variables in ecological analyses. 
+#' example environmental variables in ecological analyses.
+#'
+#' @author Ralf Schaefer
 #'
 #' @param n Number of observations.
 #' @param nvar Number of environmental variables.
@@ -28,55 +30,55 @@
 
 
 library(MASS)
-genGradData <- function(n, nvar = 10, ngrad = 3, mu = seq(0.01, 0.5, length.out = 10), rho = 0.9, rho.non.corr = 0, vnames = NULL) {
+corrEnv <- function(n, nvar = 10, ngrad = 3, mu = seq(0.01, 0.5, length.out = 10), rho = 0.9, rho.non.corr = 0, vnames = NULL) {
  	
  	if (is.numeric(c(n, nvar, ngrad, mu, rho, rho.non.corr)) == FALSE ) {
       	stop("Non-numeric input provided")
-      	}
- 	
+      	} 	
+      	
  	if (nvar < ngrad ) {
       	stop("ngrad must be equal or greater than nvar")
       	}
- 	
+
  	if (abs(rho) > 1) {
      	stop("Values > 1 and < -1 not meaningful for rho")
      	}
-	
+
 	if (abs(rho.non.corr) > 1) {
      	stop("Values > 1 and < -1 not meaningful for rho.non.corr")
      	}
-	
+
 	# create matrix
 	cor_mat <- matrix(NA, nrow = nvar, ncol = nvar)
-	
+
 	# assign each var to a group
 	ind_vec <- sample(1:ngrad, size = nvar, replace = TRUE)
-	
-	# assign correlation coefficients to 
+
+	# assign correlation coefficients to
 	for(i in 1:nvar) {
-		
+
 		for(j in 1:nvar)
  		if(ind_vec[i] == ind_vec[j])
  	 	cor_mat[i, j] <- rho
   		else cor_mat[i, j] <- rho.non.corr
  		}
- 		
+
 	# set diagonal to 1
-	diag(cor_mat) <- 1	
-	
+	diag(cor_mat) <- 1
+
 	# draw random data
 	data <- MASS::mvrnorm(n = n, mu = mu, Sigma = cor_mat)
-	
+
 	if (length(vnames)) {
-   	 	
+
    	 	if (length(vnames) != nvar) {
       	stop("Invalid number of variable names")
     	}
-	
+
 	nnames <- trimws(unlist(strsplit(vnames, split = ",")))
     setnames(data, nnames)
   	}
-  	
+
   	final <- list(cor_mat, data)
   	return(final)
  }
