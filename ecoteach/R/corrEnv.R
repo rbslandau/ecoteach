@@ -20,7 +20,7 @@
 #' nvar <- 15
 #' mu <- sample(seq(0.01, 0.5, length.out = 50), nvar, replace = TRUE)
 #'
-#' data_sim <- genGradData(1000, nvar, 5, mu, 0.9, 0)
+#' data_sim <- corrEnv(1000, nvar, 5, mu, 0.9, 0)
 #' cor(data_sim[[2]])
 #' pairs(data_sim[[2]])
 #'
