@@ -16,7 +16,7 @@
 #' @return A list with the components: 1) correlation matrix with nvar rows and columns 2) data set with n rows and nvar columns.
 #' @examples
 #' nvar <- 15
-#' mu <- sample(seq(0.01, 0.5, length.out = 50), nvar, replace = TRUE))
+#' mu <- sample(seq(0.01, 0.5, length.out = 50), nvar, replace = TRUE)
 #'
 #' data_sim <- genGradData(1000, nvar, 5, mu, 0.9, 0)
 #' cor(data_sim[[2]])
@@ -24,14 +24,17 @@
 #'
 #' @export
 
+# take known variance-covariance matrix from data and use that in function to generate more data
+
+
 library(MASS)
-genGradData <- function(n, nvar, ngrad, mu, rho, rho.non.corr, vnames = NULL) {
+genGradData <- function(n, nvar = 10, ngrad = 3, mu = seq(0.01, 0.5, length.out = 10), rho = 0.9, rho.non.corr = 0, vnames = NULL) {
  	
  	if (is.numeric(c(n, nvar, ngrad, mu, rho, rho.non.corr)) == FALSE ) {
-      	stop("Non-numeric input provided to ")
+      	stop("Non-numeric input provided")
       	}
  	
- 	if (nvar < ngrad) {
+ 	if (nvar < ngrad ) {
       	stop("ngrad must be equal or greater than nvar")
       	}
  	
