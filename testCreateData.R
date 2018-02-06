@@ -1,113 +1,72 @@
-# Simulating data for teaching
-
-library(DHARMa)
-library(lme4)
-library(foreach)
-set.seed(123)
-
-source("../ecoteach@git/createData.R")
+require(lme4)
 
 
-# No overdispersion with complex environment ------------------------------
+# complex environment
 
-testData = createData(sampleSize = 20000, intercept = 100, fixedEffects = c(2, 2, 0), cor= 0.5, overdispersion = 0, family = gaussian())
+testData = createData(sampleSize = 2000, intercept = 5, fixedEffects = c(2, 2, 0), cor = 0.5)
 
-summary(testData)
-cor(testData[, grepl("Environment", names(testData))])
+pairs(testData[, grepl("Environment", names(testData))])
 
 fittedModel <- lmer(observedResponse ~ Environment1 + Environment2 + Environment3 + (1|group), data = testData)
 summary(fittedModel)
 
-sim = simulateResiduals(fittedModel)
-plot(sim)
-
-# Parametric test
-testOverdispersionParametric(fittedModel)
-
-# Omnibus test
-testOverdispersionParametric(fittedModel)
 
 
+# External predictors
 
-# Climate data in R -------------------------------------------------------
+nvar <- 4
+mu <- sample(seq(0.01, 0.5, length.out = 50), nvar, replace = TRUE)
+data_sim <- corrEnv(n = 2000, nvar = nvar, ngrad = 3, mu = mu, rho = 0.9, rho.non.corr = 0)
 
-library(rWBclimate)
+testData = createData(sampleSize = 2000, extPredictors = data_sim[[2]], fixedEffects = c(2, 2, 1, 0))
 
-temp = get_historical_temp("DEU", "year")$data
-prec = get_historical_precip("DEU", "year")$data*10
+hist(testData$observedResponse)
+pairs(testData[, grepl("Environment", names(testData))])
 
-# https://unstats.un.org/unsd/methodology/m49/
+fittedModel <- lmer(observedResponse ~ Environment1 + Environment2 + Environment3 + Environment4 + (1|group), data = testData)
+summary(fittedModel)
 
 
 
-# Generate real world example ---------------------------------------------
+### FROM DHARMa
 
-testData = createData(sampleSize = 2000, intercept = 100, fixedEffects = c(2, 2, 0), cor= 0, numGroups = 1, overdispersion = 0, family = gaussian())
 
+
+# with zero-inflation
+
+testData = createData(sampleSize = 500, intercept = 2, fixedEffects = c(1), 
+                      overdispersion = 0, family = poisson(), quadraticFixedEffects = c(-3), 
+                      randomEffectVariance = 0, pZeroInflation = 0.6)
+
+par(mfrow = c(1,2))
+plot(testData$Environment1, testData$observedResponse)
 hist(testData$observedResponse)
 
 
+# binomial with multiple trials
+
+testData = createData(sampleSize = 40, intercept = 2, fixedEffects = c(1), 
+                      overdispersion = 0, family = binomial(), quadraticFixedEffects = c(-3), 
+                      randomEffectVariance = 0, binomialTrials = 20)
+
+plot(observedResponse1 / observedResponse0 ~ Environment1, data = testData, ylab = "Proportion 1")
 
 
-# real range is hard to achieve (or fixed effects change....)
-testData$temp = (sd(temp) * testData$Environment1) + mean(temp) 
-testData$prec = (sd(prec) * testData$Environment2) + mean(prec)
-testData$pH = testData$Environment3 + 6
+# spatial / temporal correlation
 
-pairs(testData)
-hist(testData$temp)
-hist(temp)
+testData = createData(sampleSize = 100, family = poisson(), spatialAutocorrelation = 3, 
+                      temporalAutocorrelation = 3)
 
-hist(testData$prec)
-hist(prec)
-# 
-# hist(testData$pH)
-
-
-fittedModel <- lm(observedResponse ~ temp + prec + pH, data = testData)
-summary(fittedModel)
-
-# fittedModel <- lmer(observedResponse ~ temp * prec + pH + (1|group), data = testData)
-# summary(fittedModel)
-
-
-X <- testData[, grepl("Environment", names(testData))]
-
-testData = createData(sampleSize = 20000, extPredictors = X, fixedEffects = c(2, 2, 1), overdispersion = 0, family = gaussian())
-
-cor(testData[, grepl("Environment", names(testData))])
-
-
-
-# No overdispersion -------------------------------------------------------
-
-testData = createData(sampleSize = 200, overdispersion = 0, family = binomial(), temporalAutocorrelation = 0.5)
-
-fittedModel <- glmer(observedResponse ~ Environment1 + (1|group) , family = "poisson", data = testData)
-summary(fittedModel)
-
-sim = simulateResiduals(fittedModel)
-plot(sim)
-
-# Parametric test
-testOverdispersionParametric(fittedModel)
-
-# Omnibus test
-testOverdispersionParametric(fittedModel)
-
-# Non-parametric test
-
-sim = simulateResiduals(fittedModel,refit = T)
-plot(sim)
-testOverdispersion(sim,  plot = T)
-
-
-
-
-
-testData = createData(sampleSize = 1000, family = gaussian(), temporalAutocorrelation = 1)
-
-plot((observedResponse) ~ time, data = testData)
+par(mfrow = c(1,2))
+plot(log(observedResponse) ~ time, data = testData)
 plot(log(observedResponse) ~ x, data = testData)
+
+
+
+
+
+
+
+
 
 
