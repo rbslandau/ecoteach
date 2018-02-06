@@ -1,11 +1,13 @@
 Package: ecoteach
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Simulation of ecological data for teaching
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: c(person("Lisa", "Huelsmann", role = c("aut", "cre"), email = "lisa.huelsmann@ur.de"),
+          person("Ralf", "Schaefer", role = "aut"),
+          person("Jacques", "Deere", role = "aut")
+Maintainer: <lisa.huelsmann@ur.de>
+Description: The package is intended to simulate ecological data used for teaching.
+    It also compiles several other ecological datasets available in other R packages.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
