@@ -12,7 +12,7 @@ summary(fittedModel)
 
 
 
-# External predictors
+# More complex correlation structure
 
 nvar <- 4
 mu <- sample(seq(0.01, 0.5, length.out = 50), nvar, replace = TRUE)
